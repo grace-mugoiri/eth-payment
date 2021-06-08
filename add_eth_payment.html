@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <link rel="stylesheet" href="./add_eth_payment.css">
+
+</head>
+<body>
+    <div>
+        <button class="pay-button">PAY</button>
+        <div id="status"></div>
+    </div>
+    <script type="text/javascript">
+        window.addEventListener('load', async () => {
+            if (window.ethereum) {
+                window.web3 = new Web3(ethereum);
+                try {
+                    await ethereum.enable();
+                    initPayButton()
+                } catch (error) {
+                    $('#status').html('User denied account access', error)
+                }
+            } else if (window.web3) {
+                window.web3 = new Web3(web3.currentProvider)
+                initPayButton()
+            } else {
+                $('#status').html('No metamask installed')
+            }
+        })
+
+        const initPayButton = () => {
+            $('.pay-button').click(() => {
+                const paymentAddress = '0xB91178348c876Df0d8d889D8F6ef86D1C5e32997'
+
+                const amountEth = 1
+                web3.eth.sendTransaction({
+                    from: '0xC23d6ea83DE97459d72D44989697B628a31bc0d5',
+                    to: paymentAddress,
+                    value: web3.utils.toWei('1', 'ether')
+                }, (error, transactionId) => {
+                    if (error) {
+                        console.log('Payment Failed', error)
+                        $('#status').html('Payment Failed')
+                    } else {
+                        console.log('Payment Successful', transactionId)
+                        $('#status').html('Payment Successful')
+                    }
+                })
+            })
+        }
+    </script>
+</body>
+</html>
